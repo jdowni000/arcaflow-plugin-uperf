@@ -1,9 +1,11 @@
+
+
 name: Carpentry
 on:
   pull_request:
 env:
   IMAGE_NAME: arcaflow-plugin-uperf
-  IMAGE_TAG: 'dev-build'
+  IMAGE_TAG: 'latest'
   GITHUB_USERNAME: ${{ github.actor }}
   GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_NAMESPACE: ${{ github.repository_owner }}
@@ -11,10 +13,25 @@ env:
   QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
   QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
 jobs:
-  carpenter-build:
-    name: build
+  carpenter-push:
+    name: carpenter_push_prod
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     steps:
+      - name: Checkout this project
+        uses: actions/checkout@v3
+      - name: carpenter build
+        uses: arcalot/arcaflow-plugin-image-builder@main
+        with:
+          args: build --build
+    name: carpenter_push_dev
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main'
+    steps:
+      - name: set_image_tag
+        run: |
+          export commit_hash=${{ github.sha }}
+          echo "IMAGE_TAG=${GITHUB_REF##*/}_${commit_hash:0:7}" >> $GITHUB_ENV
       - name: Checkout this project
         uses: actions/checkout@v3
       - name: carpenter build
