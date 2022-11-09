@@ -1,5 +1,3 @@
-ARG quay_expiration=never
-
 FROM quay.io/centos/centos:stream8 AS builder
 RUN dnf install --setopt=tsflags=nodocs -y git make gcc lksctp-tools-devel automake && dnf clean all
 RUN git clone -b 1.0.7 https://github.com/uperf/uperf.git /uperf
@@ -32,4 +30,4 @@ LABEL org.opencontainers.image.vendor="Arcalot project"
 LABEL org.opencontainers.image.authors="Arcalot contributors"
 LABEL org.opencontainers.image.title="Uperf Arcalot Plugin"
 LABEL io.github.arcalot.arcaflow.plugin.version="1"
-LABEL quay.expires-after=${quay_expiration}
+LABEL quay.expires-after=${QUAY_EXP}
