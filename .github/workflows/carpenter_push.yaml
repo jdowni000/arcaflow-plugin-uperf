@@ -13,8 +13,8 @@ env:
   QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
   QUAY_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
 jobs:
-  carpenter-push:
-    name: carpenter_push_prod
+  carpenter-build-prod:
+    name: carpenter_build_prod
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -24,7 +24,8 @@ jobs:
         uses: arcalot/arcaflow-plugin-image-builder@main
         with:
           args: build --build --push
-    name: carpenter_push_dev
+  carpenter-build-dev:
+    name: carpenter_build_dev
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/main'
     steps:
