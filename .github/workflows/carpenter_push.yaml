@@ -6,6 +6,7 @@ on:
 env:
   IMAGE_NAME: arcaflow-plugin-uperf
   IMAGE_TAG: 'latest'
+  QUAY_EXP: 'never'
   GITHUB_USERNAME: ${{ github.actor }}
   GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_NAMESPACE: ${{ github.repository_owner }}
