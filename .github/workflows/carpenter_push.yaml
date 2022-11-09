@@ -37,6 +37,7 @@ jobs:
       - name: set_quay_expiration
         run: |
           export QUAY_EXP="90d"
+          echo "QUAY_EXP=90d" >> $GITHUB_ENV
       - name: Checkout this project
         uses: actions/checkout@v3
       - name: carpenter build
