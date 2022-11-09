@@ -38,4 +38,4 @@ jobs:
       - name: carpenter build
         uses: arcalot/arcaflow-plugin-image-builder@main
         with:
-          args: build --build --push
+          args: build --build --push --build-arg quay_expiration=90d
