@@ -3,21 +3,49 @@ RUN dnf install --setopt=tsflags=nodocs -y git make gcc lksctp-tools-devel autom
 RUN git clone -b 1.0.7 https://github.com/uperf/uperf.git /uperf
 RUN cd /uperf && ./configure && make && make install
 
-FROM quay.io/centos/centos:stream8
-RUN dnf module -y install python39 && dnf install --setopt=tsflags=nodocs -y python39 python39-pip lksctp-tools-devel && dnf clean all
-COPY --from=builder /usr/local/bin/uperf /usr/local/bin/uperf
-RUN mkdir /plugin
-ADD https://raw.githubusercontent.com/arcalot/arcaflow-plugins/main/LICENSE /plugin/
-ADD uperf_plugin.py /plugin/
-ADD uperf_schema.py /plugin/
-ADD test_uperf_plugin.py /plugin/
-ADD poetry.lock pyproject.toml /plugin/
-WORKDIR /plugin
+# build poetry
+FROM quay.io/centos/centos:stream8 as poetry
 
-RUN pip3 install poetry
-RUN poetry config virtualenvs.create false
-RUN poetry install --without dev
-RUN python3.9 test_uperf_plugin.py
+RUN dnf module -y install python39 && dnf install --setopt=tsflags=nodocs -y python39 python39-pip lksctp-tools-devel && dnf clean all
+
+WORKDIR /app
+
+COPY poetry.lock /app/
+COPY pyproject.toml /app/
+
+RUN python3.9 -m pip install poetry \
+ && python3.9 -m poetry config virtualenvs.create false \
+ && python3.9 -m poetry install --without dev \
+ && python3.9 -m poetry export -f requirements.txt --output requirements.txt --without-hashes
+
+# run tests
+COPY --from=builder /usr/local/bin/uperf /usr/local/bin/uperf
+COPY uperf_plugin.py /app/
+COPY test_uperf_plugin.py /app/
+COPY uperf_schema.py /app/
+
+RUN mkdir /htmlcov
+RUN pip3 install coverage
+RUN python3 -m coverage run test_uperf_plugin.py
+RUN python3 -m coverage html -d /htmlcov --omit=/usr/local/*
+
+
+# final image
+FROM quay.io/centos/centos:stream8
+
+RUN dnf module -y install python39 && dnf install --setopt=tsflags=nodocs -y python39 python39-pip lksctp-tools-devel && dnf clean all
+
+WORKDIR /app
+
+COPY --from=builder /usr/local/bin/uperf /usr/local/bin/uperf
+COPY --from=poetry /app/requirements.txt /app/
+COPY --from=poetry /htmlcov /htmlcov/
+COPY LICENSE /app/
+COPY README.md /app/
+COPY uperf_schema.py /app/
+COPY uperf_plugin.py /app/
+
+RUN python3.9 -m pip install -r requirements.txt
 
 EXPOSE 20000
 
