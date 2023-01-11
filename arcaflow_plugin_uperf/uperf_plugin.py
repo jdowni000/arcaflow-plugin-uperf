@@ -8,7 +8,7 @@ import os
 import re
 
 from arcaflow_plugin_sdk import plugin
-from uperf_schema import (
+from .uperf_schema import (
     UPerfError,
     UPerfResults,
     UPerfServerError,
@@ -17,6 +17,7 @@ from uperf_schema import (
     UPerfRawData,
     Profile,
 )
+
 
 # Constants
 
