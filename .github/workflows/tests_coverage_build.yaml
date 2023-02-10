@@ -1,0 +1,31 @@
+name: Arcaflow Workflow
+on:
+  push:
+    branches:
+      - "**"
+  release:
+    types:
+      - published
+  pull_request:
+
+jobs:
+  coverage:
+    name: Testing and Coverage
+    uses: jdowni000/arcaflow-reusable-workflows/.github/workflows/coverage.yaml@injection
+    with:
+      additional_requirements: >
+        dnf install --setopt=tsflags=nodocs -y git make gcc lksctp-tools-devel automake && dnf clean all
+        git clone -b 1.0.7 https://github.com/uperf/uperf.git /uperf
+        cd /uperf && ./configure && make && make install
+
+  carpenter:
+    name: Build and Deploy Image
+    needs: [coverage]
+    uses: arcalot/arcaflow-reusable-workflows/.github/workflows/carpenter.yaml@main
+    with:
+      image_name: ${{ github.event.repository.name }}
+      image_tag: 'latest'
+      quay_img_exp: 'never'
+      github_username: ${{ github.actor }}
+      github_namespace: ${{ github.repository_owner }}
+    secrets: inherit
