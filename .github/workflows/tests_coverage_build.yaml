@@ -14,7 +14,7 @@ jobs:
     uses: jdowni000/arcaflow-reusable-workflows/.github/workflows/coverage.yaml@injection
     with:
       additional_requirements: >
-        dnf install --setopt=tsflags=nodocs -y git make gcc lksctp-tools-devel automake && dnf clean all
+        apt install --setopt=tsflags=nodocs -y git make gcc lksctp-tools-devel automake && dnf clean all
         git clone -b 1.0.7 https://github.com/uperf/uperf.git /uperf
         cd /uperf && ./configure && make && make install
 
