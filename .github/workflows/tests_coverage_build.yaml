@@ -15,7 +15,7 @@ jobs:
     with:
       cmd_one: 'sudo apt-get install -y git make gcc lksctp-tools automake && sudo apt-get clean'
       cmd_two: 'sudo git clone -b 1.0.7 https://github.com/uperf/uperf.git /uperf'
-      cmd_three: 'cd /uperf && sudo ./configure && sudo make && sudo make install'
+      cmd_three: 'cd /uperf && sudo ./configure && sudo make && sudo make install && cd ../'
         
   carpenter:
     name: Build and Deploy Image
