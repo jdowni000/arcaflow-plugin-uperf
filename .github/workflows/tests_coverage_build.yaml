@@ -13,7 +13,7 @@ jobs:
     name: Testing and Coverage
     uses: jdowni000/arcaflow-reusable-workflows/.github/workflows/coverage.yaml@injection
     with:
-      cmd_one: 'sudo apt-get install -y git make gcc lksctp-tools automake && apt-get clean'
+      cmd_one: 'sudo apt-get install -y git make gcc lksctp-tools automake && sudo apt-get clean'
       cmd_two: 'git clone -b 1.0.7 https://github.com/uperf/uperf.git /uperf'
       cmd_three: 'cd /uperf && ./configure && make && make install'
         
