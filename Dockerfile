@@ -5,7 +5,7 @@ ARG package=arcaflow_plugin_uperf
 # quay.io/arcalot/arcaflow-plugin-baseimage-python-buildbase image to limit drift
 FROM quay.io/arcalot/arcaflow-plugin-baseimage-python-buildbase:0.2.0 as build
 ARG package
-RUN dnf module -y install python39 && dnf install --setopt=tsflags=nodocs -y python39 python39-pip lksctp-tools-devel && dnf clean all \
+RUN dnf -y install lksctp-tools-devel && dnf clean all \
  && dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
  && dnf -y install uperf
 
@@ -30,7 +30,7 @@ RUN python -m coverage run tests/test_${package}.py \
 # STAGE 2 -- Build final plugin image
 FROM quay.io/arcalot/arcaflow-plugin-baseimage-python-osbase:0.2.0
 ARG package
-RUN dnf module -y install python39 && dnf install --setopt=tsflags=nodocs -y python39 python39-pip lksctp-tools-devel && dnf clean all \
+RUN dnf -y install lksctp-tools-devel && dnf clean all \
  && dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm \
  && dnf -y install uperf
 
